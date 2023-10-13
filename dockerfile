@@ -142,4 +142,4 @@ ENV EMAIL_FROM_NAME="Your Name"
 ENV CONFIG_FILE_VIEWER_ADDRESS="http://fileviewer.example.com"
 
 # Start supervisor
-CMD ["/usr/bin/supervisord"]
+# CMD ["/usr/bin/supervisord"]
