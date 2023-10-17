@@ -103,6 +103,11 @@ RUN chmod -R 777 /etc/nginx/sites-available/default
 # Copy the supervisor configuration
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
+# ERHIIN TOHIRGOO
+ 
+RUN chmod a=x /usr/lib/python3/dist-packages/supervisor
+RUN chmod a=x /var/log/supervisor
+
 # Copy the nginx config as default
 RUN unlink /etc/nginx/sites-available/default
 COPY nginx.conf /etc/nginx/sites-available/default
