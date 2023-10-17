@@ -146,10 +146,5 @@ ENV EMAIL_FROM="you@example.com"
 ENV EMAIL_FROM_NAME="Your Name"
 ENV CONFIG_FILE_VIEWER_ADDRESS="http://fileviewer.example.com"
 
-# Set permission to other user group
-RUN chmod -R o+rwx /usr/sbin/nginx
-RUN chmod -R o+rwx /usr/local/sbin/php-fpm
-RUN chmod -R o+rwx /usr/bin/supervisord
-
 # Start supervisor
 CMD ["/usr/bin/supervisord"]
