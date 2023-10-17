@@ -4,6 +4,7 @@ FROM php:7.4.33-fpm
 # Install required packages and dependencies
 RUN apt-get update && apt-get install -y \
     supervisor \
+    supervisord \
     nginx
 
 # Copy Nginx configuration
