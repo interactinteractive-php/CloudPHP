@@ -44,6 +44,7 @@ RUN apt-get update && apt-get install -y \
     git \
     openssh-client
 
+
 # Set up SSH key for ERP
 RUN mkdir -p /root/.ssh
 COPY /erp/id_rsa /root/.ssh/id_rsa
@@ -147,4 +148,4 @@ ENV EMAIL_FROM_NAME="Your Name"
 ENV CONFIG_FILE_VIEWER_ADDRESS="http://fileviewer.example.com"
 
 # Start supervisor
-CMD ["/usr/bin/supervisord"]
+CMD ["/usr/bin/supervisord","-n"]
