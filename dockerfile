@@ -43,7 +43,8 @@ RUN apt-get update && apt-get install -y \
     unzip \
     git \
     openssh-client
-
+# Create user
+RUN useradd -r -u 1001 -g 0 php
 
 # Set up SSH key for ERP
 RUN mkdir -p /root/.ssh
@@ -148,6 +149,8 @@ ENV SMTP_SSL_VERIFY="true"
 ENV EMAIL_FROM="you@example.com"
 ENV EMAIL_FROM_NAME="Your Name"
 ENV CONFIG_FILE_VIEWER_ADDRESS="http://fileviewer.example.com"
+# Change user 
+USER php
 
 # Start supervisor
-CMD ["/usr/bin/supervisord","-n"]
+CMD ["/usr/bin/supervisord"]
