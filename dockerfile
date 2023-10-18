@@ -1,13 +1,11 @@
-# Use the official PHP 7.4-FPM image as a base
-FROM php:7.4.33-fpm
+# Use the official PHP 7.4-FPM image as the base
+FROM php:7.4-fpm
 
 # Install required packages and dependencies
 RUN apt-get update && apt-get install -y \
-    supervisor \
-    nginx
+    git \
+    openssh-client
 
-# Copy Nginx configuration
-COPY nginx.conf /etc/nginx/conf.d/vhosts.conf
 
 # Create a directory for your PHP application
 WORKDIR /var/www/html
@@ -53,7 +51,7 @@ RUN chmod 600 /root/.ssh/id_rsa
 
 # Clone your private ERP
 RUN ssh-keyscan github.com >> /root/.ssh/known_hosts
-RUN git clone git@github.com:interactinteractive-php/php_erp.git /var/www/html/erp/
+RUN git clone git@github.com:interactinteractive-php/php_erp.git /var/www/html/
 RUN rm /root/.ssh/id_rsa
 
 # Set up SSH key for AssetsCore
@@ -63,7 +61,7 @@ RUN chmod 600 /root/.ssh/id_rsa
 
 # Clone your private AssetsCore
 RUN ssh-keyscan github.com >> /root/.ssh/known_hosts
-RUN git clone git@github.com:interactinteractive-php/php_assetscore.git /var/www/html/erp/assetscore/
+RUN git clone git@github.com:interactinteractive-php/php_assetscore.git /var/www/html/assetscore/
 RUN rm /root/.ssh/id_rsa
 
 # Set up SSH key for Helper
@@ -73,7 +71,7 @@ RUN chmod 600 /root/.ssh/id_rsa
 
 # Clone your private Helper
 RUN ssh-keyscan github.com >> /root/.ssh/known_hosts
-RUN git clone git@github.com:interactinteractive-php/php_helper.git /var/www/html/erp/helper/
+RUN git clone git@github.com:interactinteractive-php/php_helper.git /var/www/html/helper/
 RUN rm /root/.ssh/id_rsa
 
 # Set up SSH key for Libs
@@ -83,7 +81,7 @@ RUN chmod 600 /root/.ssh/id_rsa
 
 # Clone your private Libs
 RUN ssh-keyscan github.com >> /root/.ssh/known_hosts
-RUN git clone git@github.com:interactinteractive-php/php_libs.git /var/www/html/erp/libs/
+RUN git clone git@github.com:interactinteractive-php/php_libs.git /var/www/html/libs/
 RUN rm /root/.ssh/id_rsa
 
 # Set up SSH key for Middleware
@@ -93,34 +91,10 @@ RUN chmod 600 /root/.ssh/id_rsa
 
 # Clone your private Middleware
 RUN ssh-keyscan github.com >> /root/.ssh/known_hosts
-RUN git clone git@github.com:interactinteractive-php/php_middleware.git /var/www/html/erp/middleware/
+RUN git clone git@github.com:interactinteractive-php/php_middleware.git /var/www/html/middleware/
 RUN rm /root/.ssh/id_rsa
-
-# Copy the nginx config as default
-RUN mkdir -p /var/www/html/erp/config
-COPY config.php /var/www/html/erp/config/config.php
-COPY nginx.conf /etc/nginx/sites-available/default
-RUN chmod -R 777 /etc/nginx/sites-available/default
-
-# Copy the supervisor configuration
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-
-# ERHIIN TOHIRGOO
- 
-RUN chmod a=x /usr/lib/python3/dist-packages/supervisor
-RUN chmod a=x /var/log/supervisor
-RUN chmod 777 /usr/lib/python3/dist-packages/supervisor
-RUN chmod 777 /var/log/supervisor
-
-# Copy the nginx config as default
-RUN unlink /etc/nginx/sites-available/default
-COPY nginx.conf /etc/nginx/sites-available/default
-
-# Expose ports for Nginx and PHP-FPM
-EXPOSE 80
-EXPOSE 443
-EXPOSE 9000
-
+RUN mkdir /var/www/html/config
+COPY config.php /var/www/html/config/config.php
 # Set all ENV variables
 
 ENV URL_PROTOCOL="https"
@@ -149,8 +123,11 @@ ENV SMTP_SSL_VERIFY="true"
 ENV EMAIL_FROM="you@example.com"
 ENV EMAIL_FROM_NAME="Your Name"
 ENV CONFIG_FILE_VIEWER_ADDRESS="http://fileviewer.example.com"
-# Change user 
-USER php
+# Expose port for PHP-FPM
+EXPOSE 9000
 
-# Start supervisor
-CMD ["/usr/bin/supervisord"]
+# Set user
+USER www-data
+
+# Start PHP-FPM
+CMD ["php-fpm"]
