@@ -126,6 +126,10 @@ ENV CONFIG_FILE_VIEWER_ADDRESS="http://fileviewer.example.com"
 # Expose port for PHP-FPM
 EXPOSE 9000
 
+# Permission up
+chmod -R o+w /var/www/html/erp
+chmod 0+wx /var/www/html/erp
+
 # Set user
 USER www-data
 
