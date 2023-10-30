@@ -131,7 +131,7 @@ EXPOSE 9000
 # chmod 0+wx /var/www/html/erp
 
 # Set user
-# USER www-data
+USER www-data
 
 # Start PHP-FPM
 CMD ["php-fpm"]
