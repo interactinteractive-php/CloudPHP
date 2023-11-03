@@ -6,7 +6,6 @@ RUN apt-get update && apt-get install -y \
     git \
     openssh-client
 
-
 # Create a directory for your PHP application
 WORKDIR /var/www/html
 RUN chmod -R o+w /var/www/html/
@@ -43,60 +42,78 @@ RUN apt-get update && apt-get install -y \
     unzip \
     git \
     openssh-client
+
 # Create user
-RUN useradd -r -u 1001 -g 0 php
+
+USER 1001
+RUN echo "1001:pass" | chpasswd
+
 
 # Set up SSH key for ERP
-RUN mkdir -p /root/.ssh
-COPY /erp/id_rsa /root/.ssh/id_rsa
-RUN chmod 600 /root/.ssh/id_rsa
+RUN mkdir -p .ssh
+COPY /erp/id_rsa .ssh/id_rsa
+RUN chmod 600 .ssh/id_rsa
 
 # Clone your private ERP
-RUN ssh-keyscan github.com >> /root/.ssh/known_hosts
-RUN git clone git@github.com:interactinteractive-php/php_erp.git /var/www/html/
-RUN rm /root/.ssh/id_rsa
+RUN ssh-keyscan github.com >> .ssh/known_hosts
+RUN git clone git@github.com:interactinteractive-php/php_erp.git /var/www/html/erp/
+RUN rm .ssh/id_rsa
 
 # Set up SSH key for AssetsCore
-RUN mkdir -p /root/.ssh
-COPY /assetscore/id_rsa /root/.ssh/id_rsa
-RUN chmod 600 /root/.ssh/id_rsa
+RUN mkdir -p .ssh
+COPY /assetscore/id_rsa .ssh/id_rsa
+RUN chmod 600 .ssh/id_rsa
 
 # Clone your private AssetsCore
-RUN ssh-keyscan github.com >> /root/.ssh/known_hosts
+RUN ssh-keyscan github.com >> .ssh/known_hosts
 RUN git clone git@github.com:interactinteractive-php/php_assetscore.git /var/www/html/assetscore/
-RUN rm /root/.ssh/id_rsa
+RUN rm .ssh/id_rsa
 
 # Set up SSH key for Helper
-RUN mkdir -p /root/.ssh
-COPY /helper/id_rsa /root/.ssh/id_rsa
-RUN chmod 600 /root/.ssh/id_rsa
+RUN mkdir -p .ssh
+COPY /helper/id_rsa .ssh/id_rsa
+RUN chmod 600 .ssh/id_rsa
 
 # Clone your private Helper
-RUN ssh-keyscan github.com >> /root/.ssh/known_hosts
+RUN ssh-keyscan github.com >> .ssh/known_hosts
 RUN git clone git@github.com:interactinteractive-php/php_helper.git /var/www/html/helper/
-RUN rm /root/.ssh/id_rsa
+RUN rm .ssh/id_rsa
 
 # Set up SSH key for Libs
-RUN mkdir -p /root/.ssh
-COPY /libs/id_rsa /root/.ssh/id_rsa
-RUN chmod 600 /root/.ssh/id_rsa
+RUN mkdir -p .ssh
+COPY /libs/id_rsa .ssh/id_rsa
+RUN chmod 600 .ssh/id_rsa
 
 # Clone your private Libs
-RUN ssh-keyscan github.com >> /root/.ssh/known_hosts
+RUN ssh-keyscan github.com >> .ssh/known_hosts
 RUN git clone git@github.com:interactinteractive-php/php_libs.git /var/www/html/libs/
-RUN rm /root/.ssh/id_rsa
+RUN rm .ssh/id_rsa
 
 # Set up SSH key for Middleware
-RUN mkdir -p /root/.ssh
-COPY /middleware/id_rsa /root/.ssh/id_rsa
-RUN chmod 600 /root/.ssh/id_rsa
+RUN mkdir -p .ssh
+COPY /middleware/id_rsa .ssh/id_rsa
+RUN chmod 600 .ssh/id_rsa
 
 # Clone your private Middleware
-RUN ssh-keyscan github.com >> /root/.ssh/known_hosts
+RUN ssh-keyscan github.com >> .ssh/known_hosts
 RUN git clone git@github.com:interactinteractive-php/php_middleware.git /var/www/html/middleware/
-RUN rm /root/.ssh/id_rsa
+RUN rm .ssh/id_rsa
+
+USER root
+
+# clean 
+RUN apt-get update && apt-get --auto-remove \
+    wget \
+    unzip \
+    git \
+    openssh-client
+
 RUN mkdir /var/www/html/config
 COPY config.php /var/www/html/config/config.php
+
+USER 1001
+
+
 # Set all ENV variables
 
 ENV URL_PROTOCOL="https"
@@ -128,11 +145,6 @@ ENV CONFIG_FILE_VIEWER_ADDRESS="http://fileviewer.example.com"
 # Expose port for PHP-FPM
 EXPOSE 9000
 
-# Permission up
-
-
-# Set user
-USER www-data
 
 # Start PHP-FPM
 CMD ["php-fpm"]
