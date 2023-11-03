@@ -9,6 +9,8 @@ RUN apt-get update && apt-get install -y \
 
 # Create a directory for your PHP application
 WORKDIR /var/www/html
+RUN chmod -R o+w /var/www/html/
+RUN umask 000
 
 # Install additional PHP extensions
 RUN apt-get update && apt-get install -y \
@@ -127,7 +129,7 @@ ENV CONFIG_FILE_VIEWER_ADDRESS="http://fileviewer.example.com"
 EXPOSE 9000
 
 # Permission up
-chmod -R o+w /var/www/html/
+
 
 # Set user
 USER www-data
