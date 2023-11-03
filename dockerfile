@@ -43,11 +43,7 @@ RUN apt-get update && apt-get install -y \
     git \
     openssh-client
 
-# Create user
-
 USER 1001
-RUN echo "1001:pass" | chpasswd
-
 
 # Set up SSH key for ERP
 RUN mkdir -p .ssh
