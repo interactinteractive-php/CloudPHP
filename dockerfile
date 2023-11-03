@@ -127,8 +127,7 @@ ENV CONFIG_FILE_VIEWER_ADDRESS="http://fileviewer.example.com"
 EXPOSE 9000
 
 # Permission up
-# chmod -R o+w /var/www/html/erp
-# chmod 0+wx /var/www/html/erp
+chmod -R o+w /var/www/html/
 
 # Set user
 USER www-data
