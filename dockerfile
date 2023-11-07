@@ -36,6 +36,7 @@ RUN apt-get update && apt-get install -y \
         mysqli \
     && pecl install mcrypt-1.0.4 \
     && docker-php-ext-enable mcrypt
+    && php7.4-dom
 
 RUN apt-get update && apt-get install -y \
     wget \
